@@ -21,4 +21,4 @@ jobs:
       # 2. Запуск тестов с помощью Docker Compose
       # Эта команда в точности повторяет ту, что вы используете локально.
       - name: Run tests with Docker Compose
-        run: docker compose run --rm --entrypoint pytest etl-app
+        run: docker compose run --rm --entrypoint "python -m pytest" etl-app
