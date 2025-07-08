@@ -1,0 +1,28 @@
+# .github/workflows/ci.yml
+
+name: Run Python Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test: # Переименовал job для ясности
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Клонируем репозиторий
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Атомарно собираем образ и запускаем тесты
+      - name: Build image and run unit tests
+        run: >
+          docker compose run
+          --build
+          --rm
+          --no-deps
+          --entrypoint "python -m pytest"
+          etl-app
