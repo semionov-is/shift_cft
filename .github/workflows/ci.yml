@@ -1,6 +1,6 @@
 # .github/workflows/ci.yml
 
-name: Run Python Tests
+name: Debug Container Environment
 
 on:
   push:
@@ -9,20 +9,29 @@ on:
     branches: [ main, master ]
 
 jobs:
-  test: # Переименовал job для ясности
+  debug-container:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Клонируем репозиторий
+      # 1. Клонируем репозиторий, как и раньше
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Атомарно собираем образ и запускаем тесты
-      - name: Build image and run unit tests
-        run: >
-          docker compose run
-          --build
-          --rm
-          --no-deps
-          --entrypoint "python -m pytest"
-          etl-app
+      # 2. Собираем образ. Этот шаг, похоже, работает нормально.
+      - name: Build the Docker image
+        run: docker compose build
+
+      # 3. ЗАПУСКАЕМ ДИАГНОСТИКУ ВНУТРИ КОНТЕЙНЕРА
+      - name: Inspect the built container
+        run: |
+          docker compose run --rm --no-deps --entrypoint /bin/sh etl-app -c "
+            echo '--- 1. Current directory and files ---'
+            pwd
+            ls -la
+
+            echo '--- 2. Checking installed pip packages ---'
+            pip list
+
+            echo '--- 3. Checking where Python looks for modules (sys.path) ---'
+            python -c 'import sys; from pprint import pprint; pprint(sys.path)'
+          "
