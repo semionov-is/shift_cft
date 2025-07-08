@@ -1,3 +1,5 @@
+[![Run Python Tests](https://github.com/semionov-is/shift_cft/actions/workflows/ci.yml/badge.svg)](https://github.com/semionov-is/shift_cft/actions/workflows/ci.yml)
+
 # ETL-пайплайн для погодных данных
 
 В этом проекте сделан ETL-пайплайн для сбора, обработки и загрузки погодных данных. Он может получать данные из API [Open-Meteo](https.open-meteo.com/) или локального JSON-файла, выполнять над ними ряд преобразований и сохранять результат в базу данных PostgreSQL или в CSV-файл.
