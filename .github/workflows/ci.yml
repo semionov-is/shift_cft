@@ -5,13 +5,12 @@ name: Run Python Tests
 # Триггеры: запускать при push или pull request в основную ветку
 on:
   push:
-    branches: [ main, master ] # Укажите имя вашей основной ветки
+    branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
 
 jobs:
   build-and-test:
-    # Запускать на последней версии Ubuntu
     runs-on: ubuntu-latest
 
     steps:
@@ -19,17 +18,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Создание файла .env из секретов GitHub
-      # ВАЖНО: Никогда не храните .env файл в Git. Вместо этого мы используем
-      # зашифрованные секреты, хранящиеся в настройках репозитория.
-      - name: Create .env file
-        run: |
-          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
-          echo "DB_PASS=${{ secrets.DB_PASS }}" >> .env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
-
-      # 3. Запуск тестов с помощью Docker Compose
+      # 2. Запуск тестов с помощью Docker Compose
       # Эта команда в точности повторяет ту, что вы используете локально.
       - name: Run tests with Docker Compose
         run: docker compose run --rm --entrypoint pytest etl-app
