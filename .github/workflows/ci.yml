@@ -1,7 +1,8 @@
 # .github/workflows/ci.yml
 
-name: Debug Container Environment
+name: Run Python Tests
 
+# Триггеры: запускать при push или pull request в основную ветку
 on:
   push:
     branches: [ main, master ]
@@ -9,29 +10,17 @@ on:
     branches: [ main, master ]
 
 jobs:
-  debug-container:
+  build-and-test:
+    # Запускать на последней версии Ubuntu
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Клонируем репозиторий, как и раньше
+      # 1. Клонирование вашего репозитория на виртуальную машину
+      # Вместе с кодом будет скопирован и ваш .env файл
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Собираем образ. Этот шаг, похоже, работает нормально.
-      - name: Build the Docker image
-        run: docker compose build
-
-      # 3. ЗАПУСКАЕМ ДИАГНОСТИКУ ВНУТРИ КОНТЕЙНЕРА
-      - name: Inspect the built container
-        run: |
-          docker compose run --rm --no-deps --entrypoint /bin/sh etl-app -c "
-            echo '--- 1. Current directory and files ---'
-            pwd
-            ls -la
-
-            echo '--- 2. Checking installed pip packages ---'
-            pip list
-
-            echo '--- 3. Checking where Python looks for modules (sys.path) ---'
-            python -c 'import sys; from pprint import pprint; pprint(sys.path)'
-          "
+      # 2. Запуск тестов с помощью Docker Compose
+      # Он автоматически найдет и использует .env файл из вашего репозитория
+      - name: Run tests with Docker Compose
+        run: docker compose run --rm --entrypoint pytest etl-app
